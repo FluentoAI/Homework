@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starry Background</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .gradient-background {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: black;
+
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+
+        /* Stars positioned randomly */
+        .star:nth-child(1) { top: 5%; left: 20%; }
+        .star:nth-child(2) { top: 8%; left: 33%; }
+        /* ... additional stars ... */
+
+        .noise {
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('noise.png');
+            background-repeat: repeat;
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 10%;
+            transform: translateX(-50%);
+            width: 10%;
+            z-index: 2;
+        }
+
+        .title {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            z-index: 3;
+        }
+
+        .title h1 {
+            font-size: 40px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            margin-top: 10px;
+            font-weight: 400;
+        }
+
+        .file-upload-area {
+            position: absolute;
+            top: 30%;
+            left: 0;
+            right: 0;
+            margin: 0 10%;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            border-radius: 10px;
+            z-index: 3;
+            min-height: 100px;
+        }
+
+        .upload-btn {
+            background-color: #CB1354;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .drag-instruction {
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            color: black;
+            margin-top: 10px;
+            font-weight: 400;
+        }
+
+        .file-name {
+            font-size: 20px;
+            font-weight: 800;
+            color: #333333;
+            margin-top: 20px;
+            font-family: 'Inter', sans-serif;
+            display: none;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .convert-btn {
+            background-color: #CB1354;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: calc(50% + 140px); /* Adjusted to position halfway lower */
+            z-index: 4;
+        }
+
+        .not-right-format {
+            font-size: 16px;
+            position: absolute;
+            left: calc(50% + 140px); /* Adjusted to position it to the right of the "Convert" button */
+            top: calc(50% + 150px); /* Adjusted to align it vertically with the "Convert" button */
+            display: none;
+            font-family: 'Inter', sans-serif;;
+        }
+
+        .start-over {
+            color: rgb(255, 255, 255);
+            background-color: #007BFF;
+            font-size: 12px;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-family: 'Inter', sans-serif;
+            display: none;
+            cursor: pointer;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: calc(50% + 40px); /* Adjusted to position a bit lower */
+            z-index: 5; /* Increase the z-index to place it above the "Convert" button */
+        }
+        /* Adjust the size of the "Not the right format?" text and "Convert" button */
+
+
+.convert-btn {
+    background-color: #CB1354;
+    color: white;
+    border: none;
+    border-radius: 40px;
+    padding: 20px 40px;
+    font-size: 24px;
+    cursor: pointer;
+    display: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: calc(50% + 140px); /* Adjusted to position halfway lower */
+    z-index: 4;
+}
+.dropdown {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 100px;
+        margin-top: 5px;
+        display: none;
+        z-index: 5;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+    }
+
+    .dropdown ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .dropdown ul li {
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+    .dropdown ul li:hover {
+        background-color: #f2f2f2;
+    }
+    .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: transparent;
+    text-align: center;
+    padding: 10px 0;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    z-index: 999; /* Ensure it's above other content */
+}
+
+    </style>
+</head>
+<body>
+    <div class="gradient-background">
+        <img src="Logo12.png" alt="Logo" class="logo">
+
+        <div class="title">
+            <h1>Convert Files!!!</h1>
+            <div class="subtitle">Click the button to upload</div>
+        </div>
+
+        <div class="file-upload-area" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondragover="handleDragEnter(event)" ondrop="handleFileDrop(event)">
+            <input type="file" id="fileInput" onchange="fileSelected(event)"/>
+            <button class="upload-btn" onclick="document.getElementById('fileInput').click();">Click Here to Upload A File</button>
+            <p class="drag-instruction">Or drag the file into this area</p>
+            <div class="file-name"></div>
+            <div class="start-over" onclick="startOver()">Start Over</div>
+            <div class="not-right-format-container">
+                <p class="not-right-format"></p>            </div>
+            <!-- Add an element to hold the format options with the ID "format-options" -->
+<div class="dropdown" id="format-options">
+    <ul>
+        <!-- Format options will be added dynamically here -->
+    </ul>
+</div>
+
+
+        <button class="convert-btn">Convert</button>
+        <div class="not-right-format-container">
+            <p class="not-right-format"></p>
+            <div class="dropdown">
+                <ul>
+                    <!-- Format options will be added dynamically here -->
+                </ul>
+            </div>
+        </div>
+        
+
+        <!-- All star elements -->
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+
+        <div class="noise"></div>
+    </div>
+    <script>
+        // Define a map to map file extensions to output formats
+var formatMap = {
+    'doc': 'pdf',
+    'docx': 'pdf',
+    'xls': 'pdf',
+    'xlsx': 'pdf',
+    'ppt': 'pdf',
+    'pptx': 'pdf',
+    'odt': 'docx',
+    'ods': 'xlsx',
+    'odp': 'pptx',
+    'txt': 'doc',
+    'rtf': 'doc',
+    'jpg': 'png',
+    'png': 'jpg',
+    'svg': 'png',
+    'pdf': 'docx'
+};
+
+        // Function to prevent default drag-and-drop behavior
+        function preventDefaultEvents(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        // Add event listeners to the document for drag-and-drop
+        document.addEventListener('dragenter', preventDefaultEvents, false);
+        document.addEventListener('dragover', preventDefaultEvents, false);
+        document.addEventListener('dragleave', preventDefaultEvents, false);
+        document.addEventListener('drop', preventDefaultEvents, false);
+
+        // Add a drop event listener to handle file drop
+        document.addEventListener('drop', handleFileDrop, false);
+
+        function guessOutputFormat(filename) {
+            var extension = filename.split('.').pop().toLowerCase();
+            var formatMap = {
+                'doc': 'pdf', 'docx': 'pdf', 'xls': 'pdf', 'xlsx': 'pdf', 'ppt': 'pdf', 'pptx': 'pdf',
+                'odt': 'docx', 'ods': 'xlsx', 'odp': 'pptx', 'txt': 'doc', 'rtf': 'doc',
+                'jpg': 'png', 'png': 'jpg', 'svg': 'png', 'pdf': 'docx'
+            };
+            return formatMap[extension] || 'pdf';
+        }
+
+        function handleDragEnter(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Hide upload button and instructions
+            var uploadButton = document.querySelector('.upload-btn');
+            var dragInstruction = document.querySelector('.drag-instruction');
+            uploadButton.style.display = 'none';
+            dragInstruction.style.display = 'none';
+            toggleUploadElements(false);
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            // Only toggle elements if a file is not selected
+            if (!document.getElementById('fileInput').files.length) {
+                toggleUploadElements(true);
+            }
+        }
+
+        function fileSelected(event) {
+    const fileInput = event.target;
+    if (fileInput.files.length > 0) {
+        updateUIForFile(fileInput.files[0]);
+        toggleUploadElements(false);
+        updateFormatDropdown(fileInput.files[0]); // Update the drop-down based on the selected file
+
+    }
+}
+
+
+
+        function updateUIForFile(file) {
+            if (file) {
+                var fileNameDisplay = document.querySelector('.file-name');
+                var convertButton = document.querySelector('.convert-btn');
+                var formatSuggestion = document.querySelector('.not-right-format');
+                var startOverButton = document.querySelector('.start-over');
+
+                fileNameDisplay.textContent = file.name;
+                fileNameDisplay.style.display = 'block';
+                convertButton.textContent = 'Convert to ' + guessOutputFormat(file.name).toUpperCase();
+                convertButton.style.display = 'block';
+                formatSuggestion.style.display = 'block';
+                startOverButton.style.display = 'block';
+            }
+        }
+
+        function startOver() {
+            location.reload(); // This will refresh the page
+        }
+
+        function toggleUploadElements(show) {
+            var uploadButton = document.querySelector('.upload-btn');
+            var dragInstruction = document.querySelector('.drag-instruction');
+
+            if (show) {
+                uploadButton.style.display = 'block';
+                dragInstruction.style.display = 'block';
+            } else {
+                uploadButton.style.display = 'none';
+                dragInstruction.style.display = 'none';
+            }
+        }
+
+
+    function handleFileDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Handle the dropped file here. You can access the dropped file(s) using event.dataTransfer.files.
+    var files = event.dataTransfer.files;
+
+    if (files.length > 0) {
+        // Handle the dropped file(s) as needed, for example, by calling a function to update the UI.
+        updateUIForFile(files[0]);
+    }
+
+    // Ensure that elements are displayed when a file is dropped
+    var fileUploadArea = document.querySelector('.file-upload-area');
+    fileUploadArea.style.background = 'rgba(255, 255, 255, 0.5)'; // Restore the background
+    toggleUploadElements(false); // Hide drag-and-drop elements
+}
+
+
+function selectFormat(format) {
+    var convertButton = document.querySelector('.convert-btn');
+    convertButton.textContent = 'Convert to ' + format;
+    toggleDropdown();
+}
+
+// Add this code after your existing JavaScript code
+var dropdownVisible = false;
+var currentDropdown = null;
+
+function toggleDropdown(element) {
+    var dropdown = element.nextElementSibling; // Select the next sibling (dropdown container)
+    if (dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+    } else {
+        dropdown.style.display = 'block';
+    }
+}
+
+
+document.addEventListener('click', function (event) {
+    if (!event.target.classList.contains('not-right-format')) {
+        // Hide the dropdown if you click anywhere outside of the "Not the right format" text
+        hideDropdown();
+    }
+});
+// Get a reference to the format options <ul> element
+    var formatOptionsList = document.getElementById('format-options');
+
+// Function to populate the format options dynamically
+function populateFormatOptions() {
+    var formatMap = {
+    'doc': 'pdf',
+    'docx': 'pdf',
+    'xls': 'pdf',
+    'xlsx': 'pdf',
+    'ppt': 'pdf',
+    'pptx': 'pdf',
+    'odt': 'docx',
+    'ods': 'xlsx',
+    'odp': 'pptx',
+    'txt': 'doc',
+    'rtf': 'doc',
+    'jpg': 'png',
+    'png': 'jpg',
+    'svg': 'png'
+};
+
+// Function to populate the format options dynamically
+function updateFormatDropdown(file) {
+    var formatOptionsList = document.querySelector('.dropdown ul');
+    formatOptionsList.innerHTML = ''; // Clear the existing options
+
+    // Get the file extension
+    var fileExtension = file.name.split('.').pop().toLowerCase();
+
+    // Check if the file extension exists in the formatMap
+    if (formatMap.hasOwnProperty(fileExtension)) {
+        var outputFormat = formatMap[fileExtension];
+
+        // Create a <li> element for the selected output format
+        var li = document.createElement('li');
+        li.textContent = outputFormat.toUpperCase();
+        li.onclick = function () {
+            selectFormat(outputFormat);
+        };
+
+        // Append the <li> element to the format options list
+        formatOptionsList.appendChild(li);
+    } else {
+        // If the file format is not supported, display a message
+        var li = document.createElement('li');
+        li.textContent = 'Unsupported Format';
+        li.style.color = 'red';
+        formatOptionsList.appendChild(li);
+    }
+}
+
+
+
+    // Clear any existing options
+    formatOptionsList.innerHTML = '';
+
+    // Iterate over formatMap keys and create <li> elements
+    for (var extension in formatMap) {
+        if (formatMap.hasOwnProperty(extension)) {
+            var format = formatMap[extension];
+            var li = document.createElement('li');
+            li.textContent = format.toUpperCase();
+            li.onclick = function () {
+                selectFormat(format);
+            };
+            formatOptionsList.appendChild(li);
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var notRightFormatElements = document.querySelectorAll('.not-right-format');
+    notRightFormatElements.forEach(function(element) {
+        element.addEventListener('click', function() {
+            // Close any open dropdowns before toggling the current one
+            hideDropdowns();
+            toggleDropdown(this);
+        });
+    });
+});
+// Function to hide the dropdown
+function hideDropdowns() {
+    var dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach(function(dropdown) {
+        dropdown.style.display = 'none';
+    });
+}
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    var notRightFormatElements = document.querySelectorAll('.not-right-format');
+    notRightFormatElements.forEach(function(element) {
+        element.addEventListener('click', function() {
+            // Close any open dropdowns before toggling the current one
+            hideDropdowns();
+            toggleDropdown(this); // Pass the clicked element (this) to toggleDropdown
+        });
+    });
+});
+
+
+
+// Function to hide all dropdowns
+function hideDropdowns() {
+    var dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach(function(dropdown) {
+        dropdown.style.display = 'none';
+    });
+}
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to handle file upload and send AJAX request to Flask backend
+    function uploadFile() {
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+
+        // AJAX request to the Flask '/upload' route
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Create a link element, use it to download the file and remove it
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = file.name.split('.')[0] + '_converted.' + guessOutputFormat(file.name);
+            document.body.appendChild(a); 
+            a.click();    
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Attach event listener to convert button
+    var convertBtn = document.querySelector('.convert-btn');
+    if (convertBtn) {
+        convertBtn.addEventListener('click', uploadFile);
+    }
+});
+
+// Existing functions and code...
+
+
+    </script>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; Fluento Hometake Excercise</p>
+        </div>
+    </footer>
+    
+</body>
+</html>
